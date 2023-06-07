@@ -7,7 +7,7 @@ import (
 func main() {
 
 	const (
-		com_port    = "COM4"
+		com_port    = "/dev/ttyUSB0"
 		baud_rate   = 9600
 		mqtt_broker = "tangnguyendev"
 		mqtt_port   = 1883

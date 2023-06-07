@@ -22,7 +22,10 @@ services:
     environment:
       - GF_SECURITY_ADMIN_USER=admin
       - GF_SECURITY_ADMIN_PASSWORD=adminpassword@123
-      - GF_INSTALL_PLUGINS=
+      - GF_FEATURE_TOGGLES_ENABLE=publicDashboards
+      - GF_PANELS_DISABLE_SANITIZE_HTML=true
+      - GF_INSTALL_PLUGINS=grafana-clock-panel, aidanmountford-html-panel, gapit-htmlgraphics-panel
+      
     ports:
       - '3000:3000'
     volumes:
