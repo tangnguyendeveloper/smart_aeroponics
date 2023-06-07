@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  mqtt-broker:
+    image: eclipse-mosquitto
+    container_name: mqtt-tangdev
+    hostname: mqtt-tangdev
+    restart: always
+    volumes:
+      - ./mosquitto.conf:/mosquitto/config/mosquitto.conf
+      - /mosquitto/data
+      - /mosquitto/log
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    networks:
+      - METIG-Stask-net
+
+  influxdb:
+    image: influxdb:2.7.1
+    container_name: influxdb-tangdev
+    hostname: influxdb-tangdev
+    restart: always
+    ports:
+      - "8086:8086"
+    environment:
+      - DOCKER_INFLUXDB_INIT_MODE=setup
+      - DOCKER_INFLUXDB_INIT_USERNAME=admin
+      - DOCKER_INFLUXDB_INIT_PASSWORD=adminpassword@123
+      - DOCKER_INFLUXDB_INIT_ORG=admin-org
+      - DOCKER_INFLUXDB_INIT_BUCKET=smart-aeroponics
+      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=admintoken@123
+      
+    volumes:
+      - influxdb_data:/var/lib/influxdb2
+    networks:
+      - METIG-Stask-net
+
+volumes:
+  influxdb_data:
+    driver: local
+
+networks:
+  METIG-Stask-net:
+    name: METIG-Stask-net
+    driver: bridge

@@ -1,0 +1,40 @@
+version: '3.8'
+services:
+  telegraf:
+    image: telegraf
+    container_name: telegraf-tangdev
+    hostname: telegraf-tangdev
+    restart: always
+    volumes:
+    - ./telegraf.conf:/etc/telegraf/telegraf.conf:ro
+    ports:
+    - '8125:8125/udp'
+    - '8092:8092/udp'
+    - '8094:8094'
+    networks:
+      - METIG-Stask-net
+
+  grafana:
+    image: grafana/grafana
+    container_name: grafana-tangdev
+    hostname: grafana-tangdev
+    restart: always
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=adminpassword@123
+      - GF_INSTALL_PLUGINS=
+    ports:
+      - '3000:3000'
+    volumes:
+      - grafana_data:/var/lib/grafana
+    networks:
+      - METIG-Stask-net
+
+volumes:
+  grafana_data:
+    driver: local
+
+networks:
+  METIG-Stask-net:
+    name: METIG-Stask-net
+    external: true

@@ -1,0 +1,77 @@
+### Doc 
+	https://onlyoneaman.medium.com/how-to-install-tig-stack-telegraf-influx-and-grafana-on-ubuntu-405755901ac2
+	
+# Ubuntu server 22.04 LTS
+
+apt-get update
+apt-get upgrade
+
+apt install mosquitto mosquitto-clients
+systemctl status mosquitto
+nano /etc/mosquitto/mosquitto.conf
+	#add the end
+	listener 1883 0.0.0.0
+	allow_anonymous true
+systemctl restart mosquitto
+systemctl status mosquitto
+
+
+read doc
+
+#####################################################################################
+
+# Docker
+1. install Docker
+2. install MQTT broker
+
+docker pull eclipse-mosquitto
+mkdir TIGStask && cd TIGStask
+nano mosquitto.conf
+----------------
+persistence true
+persistence_location /mosquitto/data/
+log_dest file /mosquitto/log/mosquitto.log
+
+## TCP listener ##
+listener 1883 0.0.0.0
+## Web Socket listener ##
+listener 9001 0.0.0.0
+
+## Authentication ##
+allow_anonymous true
+----------------
+docker run  --restart=always -d --name="mosquitto" -p 1883:1883 -p 9001:9001 -v ~/TIGStask/mosquitto.conf:/mosquitto/config/mosquitto.conf -v /mosquitto/data -v /mosquitto/log eclipse-mosquitto
+
+
+3. install InfluxDB
+
+docker pull influxdb
+mkdir -p ~/TIGStask/influxdb
+docker run --rm influxdb influxd print-config > ~/TIGStask/influxdb/config.yml
+mkdir -p ~/TIGStask/influxdb/lib/influxdb2
+
+docker run --restart=always -d --name="influxdb2" \
+      -p 8086:8086 \
+      -v ~/TIGStask/influxdb/lib/influxdb2:/var/lib/influxdb2 \
+	  -v ~/TIGStask/influxdb/config.yml:/etc/influxdb2/config.yml \
+      influxdb:latest
+
+docker exec influxdb2 influx setup \
+      --username admin \
+      --password admin@123 \
+      --org admin-org \
+      --bucket admin-bucket \
+      --force
+
+export ADMIN_TOKEN=$(docker exec influxdb2 influx auth list --user admin --hide-headers | cut -f 3)
+
+
+4. install telegraf
+
+docker pull telegraf
+docker run --rm telegraf telegraf config > ~/TIGStask/telegraf.conf.back
+
+docker run --restart=always -d --name=telegraf \
+      -p 8125:8125/udp -p 8092:8092/udp -p 8094:8094 \
+      -v ~/TIGStask/telegraf.conf:/etc/telegraf/telegraf.conf:ro telegraf
+
