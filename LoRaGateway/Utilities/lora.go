@@ -147,15 +147,15 @@ func (lg *LoRaGateway) handleLoRaACK(ack []byte) {
 	status := ""
 	switch ack[20] {
 	case PUMP_ON:
-		action = "PUMP_ON"
+		status = "PUMP_ON"
 	case PUMP_OFF:
-		action = "PUMP_OFF"
+		status = "PUMP_OFF"
 	case LIGHT_ON:
-		action = "LIGHT_ON"
+		status = "LIGHT_ON"
 	case LIGHT_OFF:
-		action = "LIGHT_OFF"
+		status = "LIGHT_OFF"
 	case CONFIGURE:
-		action = "CONFIGURE_OK"
+		status = "CONFIGURE_OK"
 	}
 
 	js_ack := fmt.Sprintf(`{"id": "%s", "action": "%s", "status": "%s"}`, id, action, status)
