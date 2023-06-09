@@ -1,13 +1,10 @@
 FROM golang:1.20
 
-WORKDIR /gateway
+WORKDIR $GOPATH/src/LoRaGateway
 
-COPY go.mod go.sum ./
+COPY . .
 RUN go mod download
 
-ADD Utilities ./
-COPY *.go ./
-
-RUN CGO_ENABLED=0 GOOS=linux go build -o /lora-gateway
+RUN go build -o /lora-gateway
 
 CMD [ "/lora-gateway" ]
