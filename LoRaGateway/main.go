@@ -1,6 +1,6 @@
 package main
 
-import "github.com/tangnguyendeveloper/smart_aeroponics/LoRaGateway/Utilities"
+import "LoRaGateway/Utilities"
 
 func main() {
 
