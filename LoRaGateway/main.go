@@ -1,6 +1,6 @@
 package main
 
-import "LoRaGateway/Utilities"
+import "./Utilities"
 
 func main() {
 
