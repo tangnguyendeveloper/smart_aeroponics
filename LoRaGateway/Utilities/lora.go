@@ -118,16 +118,50 @@ func (lg *LoRaGateway) forwardToMQTTBroker(topic_collect_sensor_data string) {
 			}
 
 			if token := lg.mqtt_client.Publish(topic_collect_sensor_data, 0, false, mqtt_paylod); token.Wait() && token.Error() != nil {
-				log.Printf("ERROE: MQTT Publish %s\n", token.Error())
+				log.Printf("ERROR: MQTT Publish %s\n", token.Error())
 			}
 			log.Println("SENSOR_DATA: ", string(mqtt_paylod))
 
 		case ACK:
-			log.Println("ACK: ", payload[1:])
+			go lg.handleLoRaACK(payload[1:])
 
 		default:
 			continue
 		}
 
 	}
+}
+
+func (lg *LoRaGateway) handleLoRaACK(ack []byte) {
+	id := string(ack[:19])
+	action := ""
+	switch ack[19] {
+	case CONTROL:
+		action = "CONTROL-ACK"
+	case STATUS:
+		action = "CHECK-STATUS-ACK"
+	case CONFIGURE:
+		action = "CONFIGURE-ACK"
+	}
+
+	status := ""
+	switch ack[20] {
+	case PUMP_ON:
+		action = "PUMP_ON"
+	case PUMP_OFF:
+		action = "PUMP_OFF"
+	case LIGHT_ON:
+		action = "LIGHT_ON"
+	case LIGHT_OFF:
+		action = "LIGHT_OFF"
+	case CONFIGURE:
+		action = "CONFIGURE_OK"
+	}
+
+	js_ack := fmt.Sprintf(`{"id": "%s", "action": "%s", "status": "%s"}`, id, action, status)
+	if token := lg.mqtt_client.Publish("lora/ack", 0, false, []byte(js_ack)); token.Wait() && token.Error() != nil {
+		log.Printf("ERROE: MQTT Publish %s\n", token.Error())
+	}
+	log.Println(js_ack)
+
 }

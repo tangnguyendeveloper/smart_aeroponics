@@ -20,7 +20,7 @@
 #define HASH_SIZE 64
 #define KEY_SIZE 32
 
-#define TIMER_SEND_DATA_PERIOD 300000 // 5 minutes
+#define TIMER_SEND_DATA_PERIOD 120000 // 2 minutes
 #define TIMER_RECEIVE_COMMAND_PERIOD 100 // 3 seconds
 
 // sensor data message type

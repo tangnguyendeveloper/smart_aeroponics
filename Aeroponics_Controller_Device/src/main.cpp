@@ -16,7 +16,7 @@ float Temperature, Humidity = 0, HeatIndex = 0;
 bool ReadTemperatureAndHumidity();
 
 uint16_t analogBuffer[SCOUNT];
-float TDSValue = -1, ECvalue = 0;
+float TDSValue = 1, ECvalue = 0;
 uint16_t getMedianNum(uint16_t bArray[], uint16_t iFilterLen);
 void ReadTDSAndECLevel();
 
@@ -134,7 +134,7 @@ void ReadTDSAndECLevel() {
     }   
     
     float averageVoltage = getMedianNum(analogBuffer,SCOUNT) * (float)VREF / 1024.0; // read the analog value more stable by the median filtering algorithm, and convert to voltage value
-    float compensationCoefficient=1.0+0.02*(Temperature-27.0);    //temperature compensation formula: fFinalResult(25^C) = fFinalResult(current)/(1.0+0.02*(fTP-25.0));
+    float compensationCoefficient=1.0+0.02*(Temperature-25.0);    //temperature compensation formula: fFinalResult(25^C) = fFinalResult(current)/(1.0+0.02*(fTP-25.0));
     float compensationVolatge=averageVoltage/compensationCoefficient;  //temperature compensation
     TDSValue=(133.42*compensationVolatge*compensationVolatge*compensationVolatge - 255.86*compensationVolatge*compensationVolatge + 857.39*compensationVolatge)*0.5; //convert voltage value to tds value
 
@@ -274,6 +274,7 @@ void ReceiveCommand() {
               SendACK(CONTROL, PUMP_ON);
             }
             pump_status = data["pump"].as<uint8_t>();
+            last_control = millis();
         }
 
         if (data.containsKey("light")) {
@@ -286,6 +287,7 @@ void ReceiveCommand() {
               SendACK(CONTROL, LIGHT_ON);
             }
             light_status = data["light"].as<uint8_t>();
+            last_control = millis();
         }
       
     }

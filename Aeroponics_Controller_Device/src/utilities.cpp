@@ -2,7 +2,7 @@
 #include <EEPROM.h>
 
 float Round2Decimal(float value) {
-   return (int)(value * 100 + 0.5) / 100.0;
+   return (unsigned int)(value * 100 + 0.5) / 100.0;
 }
 
 void LengthToBytes(byte* b, uint16_t length) {
