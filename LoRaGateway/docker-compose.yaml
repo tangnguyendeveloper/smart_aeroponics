@@ -5,7 +5,7 @@ services:
     restart: always
     networks:
       - METIG-Stask-net
-    volumes:
+    devices:
     - /dev/ttyUSB0:/dev/ttyUSB0
 
 networks:
