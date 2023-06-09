@@ -1,0 +1,14 @@
+version: '3.8'
+services:
+  lora-gateway:
+    build: .
+    restart: always
+    networks:
+      - METIG-Stask-net
+    volumes:
+    - /dev/ttyUSB0:/dev/ttyUSB0
+
+networks:
+  METIG-Stask-net:
+    name: METIG-Stask-net
+    external: true

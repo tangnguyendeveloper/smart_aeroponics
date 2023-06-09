@@ -1,15 +1,13 @@
 package main
 
-import (
-	"LoRaGateway/Utilities"
-)
+import "github.com/tangnguyendeveloper/smart_aeroponics/LoRaGateway/Utilities"
 
 func main() {
 
 	const (
 		com_port    = "/dev/ttyUSB0"
 		baud_rate   = 9600
-		mqtt_broker = "tangnguyendev"
+		mqtt_broker = "mqtt-broker"
 		mqtt_port   = 1883
 
 		queue_capacity = 521

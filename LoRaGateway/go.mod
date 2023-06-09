@@ -1,4 +1,4 @@
-module LoRaGateway
+module github.com/tangnguyendeveloper/smart_aeroponics/LoRaGateway
 
 go 1.20
 
