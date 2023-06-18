@@ -1,8 +1,9 @@
 #include "utilities.hpp"
 #include <EEPROM.h>
 
-float Round2Decimal(float value) {
-   return (unsigned int)(value * 100 + 0.5) / 100.0;
+const float Round2Decimal(float value) {
+   //return (unsigned int)(value * 100 + 0.5) / (float)100.0;
+   return roundf(value * 100U) / 100.0f;
 }
 
 void LengthToBytes(byte* b, uint16_t length) {

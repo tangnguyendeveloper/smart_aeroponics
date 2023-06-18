@@ -17,7 +17,7 @@ bool ReadTemperatureAndHumidity();
 
 uint16_t analogBuffer[SCOUNT];
 float TDSValue = 1, ECvalue = 0;
-uint16_t getMedianNum(uint16_t bArray[], uint16_t iFilterLen);
+const uint16_t getMedianNum(uint16_t* bArray, uint16_t iFilterLen);
 void ReadTDSAndECLevel();
 
 // 6 TX, 7 RX on LoRa E32
@@ -98,25 +98,21 @@ bool ReadTemperatureAndHumidity() {
 }
 
 
-uint16_t getMedianNum(uint16_t bArray[], uint16_t iFilterLen) {
-      uint16_t bTab[iFilterLen];
-      for (byte i = 0; i<iFilterLen; i++)
-      bTab[i] = bArray[i];
+const uint16_t getMedianNum(uint16_t* bArray, uint16_t iFilterLen) {
+
       uint16_t i, j, bTemp;
+
       for (j = 0; j < iFilterLen - 1; j++) {
         for (i = 0; i < iFilterLen - j - 1; i++) {
-          if (bTab[i] > bTab[i + 1]) {
-            bTemp = bTab[i];
-            bTab[i] = bTab[i + 1];
-            bTab[i + 1] = bTemp;
+          if (*(bArray + i) > *(bArray + i + 1)) {
+            bTemp = *(bArray + i);
+            *(bArray + i) = *(bArray + i + 1);
+            *(bArray + i + 1) = bTemp;
          }
         }
       }
-      if ((iFilterLen & 1) > 0)
-    bTemp = bTab[(iFilterLen - 1) / 2];
-      else
-    bTemp = (bTab[iFilterLen / 2] + bTab[iFilterLen / 2 - 1]) / 2;
-      return bTemp;
+      
+    return *(bArray + 16);
 }
 
 void ReadTDSAndECLevel() {
@@ -127,18 +123,18 @@ void ReadTDSAndECLevel() {
         analogBuffer[analogBufferIndex] = (uint16_t)analogRead(TdsSensorPin);    //read the analog value and store into the buffer
         analogBufferIndex++;
         if(analogBufferIndex == SCOUNT) {
-          analogBufferIndex = 0;
+          analogBufferIndex = 0U;
           break;
         }
-        delay(40);
+        delay(40U);
     }   
     
-    float averageVoltage = getMedianNum(analogBuffer,SCOUNT) * (float)VREF / 1024.0; // read the analog value more stable by the median filtering algorithm, and convert to voltage value
-    float compensationCoefficient=1.0+0.02*(Temperature-25.0);    //temperature compensation formula: fFinalResult(25^C) = fFinalResult(current)/(1.0+0.02*(fTP-25.0));
-    float compensationVolatge=averageVoltage/compensationCoefficient;  //temperature compensation
-    TDSValue=(133.42*compensationVolatge*compensationVolatge*compensationVolatge - 255.86*compensationVolatge*compensationVolatge + 857.39*compensationVolatge)*0.5; //convert voltage value to tds value
+    const float averageVoltage = getMedianNum(analogBuffer,SCOUNT) * VREF / 1024.0f; // read the analog value more stable by the median filtering algorithm, and convert to voltage value
+    const float compensationCoefficient=1.0f+0.02f*(Temperature-25.0f);    //temperature compensation formula: fFinalResult(25^C) = fFinalResult(current)/(1.0+0.02*(fTP-25.0));
+    const float compensationVolatge=averageVoltage/compensationCoefficient;  //temperature compensation
+    TDSValue=(133.42f*compensationVolatge*compensationVolatge*compensationVolatge - 255.86f*compensationVolatge*compensationVolatge + 857.39f*compensationVolatge)*0.5f; //convert voltage value to tds value
 
-    ECvalue = (TDSValue * 2) / 707;
+    ECvalue = (TDSValue * 2U) / 1000U;
 }
 
 
@@ -236,11 +232,11 @@ void ReceiveCommand() {
     String command_msg = LoRa.readStringUntil('}');
     command_msg.trim();
     //Serial.println("Done!");
-    if (command_msg.charAt(0) == STATUS) {
-        if (command_msg.charAt(2) == 'p' && pump_status == 1) SendACK(STATUS, PUMP_ON);
-        else if (command_msg.charAt(2) == 'p') SendACK(STATUS, PUMP_OFF);
-        else if (command_msg.charAt(2) == 'l' && light_status == 1) SendACK(STATUS, LIGHT_ON);
-        else if (command_msg.charAt(2) == 'l') SendACK(STATUS, LIGHT_OFF);
+    if (command_msg[0] == STATUS) {
+        if (command_msg[2] == 'p' && pump_status == 1) SendACK(STATUS, PUMP_ON);
+        else if (command_msg[2] == 'p') SendACK(STATUS, PUMP_OFF);
+        else if (command_msg[2] == 'l' && light_status == 1) SendACK(STATUS, LIGHT_ON);
+        else if (command_msg[2] == 'l') SendACK(STATUS, LIGHT_OFF);
         return;
     }
 
@@ -262,45 +258,51 @@ void ReceiveCommand() {
     
     deserializeJson(data, command_msg.begin()+148);
 
-    if (command_msg.charAt(0) == CONTROL) {
+    switch (command_msg[0]){
+        case CONTROL:
 
-        if (data.containsKey("pump")) {
-            if (data["pump"].as<uint8_t>() == 0) {
-              digitalWrite(RELAY_PIN, LOW);
-              SendACK(CONTROL, PUMP_OFF);
+            if (data.containsKey("pump")) {
+                if (data["pump"].as<uint8_t>() == 0) {
+                digitalWrite(RELAY_PIN, LOW);
+                SendACK(CONTROL, PUMP_OFF);
+                }
+                else if (data["pump"].as<uint8_t>() == 1) {
+                digitalWrite(RELAY_PIN, HIGH);
+                SendACK(CONTROL, PUMP_ON);
+                }
+                pump_status = data["pump"].as<uint8_t>();
+                last_control = millis();
             }
-            if (data["pump"].as<uint8_t>() == 1) {
-              digitalWrite(RELAY_PIN, HIGH);
-              SendACK(CONTROL, PUMP_ON);
-            }
-            pump_status = data["pump"].as<uint8_t>();
-            last_control = millis();
-        }
 
-        if (data.containsKey("light")) {
-            if (data["light"].as<uint8_t>() == 0) {
-              digitalWrite(LIGHT_PIN, LOW);
-              SendACK(CONTROL, LIGHT_OFF);
+            if (data.containsKey("light")) {
+                if (data["light"].as<uint8_t>() == 0) {
+                digitalWrite(LIGHT_PIN, LOW);
+                SendACK(CONTROL, LIGHT_OFF);
+                }
+                else if (data["light"].as<uint8_t>() == 1) {
+                digitalWrite(LIGHT_PIN, HIGH);
+                SendACK(CONTROL, LIGHT_ON);
+                }
+                light_status = data["light"].as<uint8_t>();
+                last_control = millis();
             }
-            if (data["light"].as<uint8_t>() == 1) {
-              digitalWrite(LIGHT_PIN, HIGH);
-              SendACK(CONTROL, LIGHT_ON);
+            
+            break;
+        
+        case CONFIGURE:
+
+            if (data.containsKey("ON")) {
+                pump_on_time = data["ON"].as<unsigned long>()*60*1000;
             }
-            light_status = data["light"].as<uint8_t>();
-            last_control = millis();
-        }
-      
-    }
+            if (data.containsKey("OFF")) {
+                pump_off_time = data["OFF"].as<unsigned long>()*60*1000;
+            }
+            SendACK(CONFIGURE, CONFIGURE);
+            
+            break;
 
-    if (command_msg.charAt(0) == CONFIGURE) {
-        if (data.containsKey("ON")) {
-            pump_on_time = data["ON"].as<unsigned long>()*60*1000;
-        }
-        if (data.containsKey("OFF")) {
-            pump_off_time = data["OFF"].as<unsigned long>()*60*1000;
-        }
-        SendACK(CONFIGURE, CONFIGURE);
-
+        default:
+            break;
     }
 
     data.clear();
