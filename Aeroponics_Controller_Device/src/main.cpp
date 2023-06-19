@@ -130,7 +130,7 @@ void ReadTDSAndECLevel() {
     }   
     
     const float averageVoltage = getMedianNum(analogBuffer,SCOUNT) * VREF / 1024.0f; // read the analog value more stable by the median filtering algorithm, and convert to voltage value
-    const float compensationCoefficient=1.0f+0.02f*(Temperature-25.0f);    //temperature compensation formula: fFinalResult(25^C) = fFinalResult(current)/(1.0+0.02*(fTP-25.0));
+    const float compensationCoefficient=1.0f+0.02f*(HeatIndex-25.0f);    //temperature compensation formula: fFinalResult(25^C) = fFinalResult(current)/(1.0+0.02*(fTP-25.0));
     const float compensationVolatge=averageVoltage/compensationCoefficient;  //temperature compensation
     TDSValue=(133.42f*compensationVolatge*compensationVolatge*compensationVolatge - 255.86f*compensationVolatge*compensationVolatge + 857.39f*compensationVolatge)*0.5f; //convert voltage value to tds value
 
@@ -208,21 +208,23 @@ void SendSensorData() {
     to_hex_string(public_key, KEY_SIZE, hex_public_key);
     data["PK"] = hex_public_key;
     
-    n = serializeJson(data, Serial);
-    Serial.print("\n Length: ");
-    Serial.println(n);
+    //n = serializeJson(data, Serial);
+    //Serial.print("\n Length: ");
+    //Serial.println(n);
+
+    n = measureJson(data);
 
     byte length[2];
     LengthToBytes(length, n+1);
     LoRa.write(length, 2);
     LoRa.write(SENSOR_DATA);
     n = serializeJson(data, LoRa);
-    Serial.print("Send in: ");
-    Serial.print(n);
-    Serial.print(" bytes \n");
+    // Serial.print("Send in: ");
+    // Serial.print(n);
+    // Serial.print(" bytes \n");
 
     data.clear();
-    Serial.println("Send Sensor Data OK");
+    //Serial.println("Send Sensor Data OK");
 
 }
 
@@ -246,8 +248,8 @@ void ReceiveCommand() {
     
     Serial.println(command_msg);
 
-    hex_string_to_bytes(public_key, KEY_SIZE, command_msg.begin()+65);
-    GetSecretKey(public_key, secret_key);
+    // hex_string_to_bytes(public_key, KEY_SIZE, command_msg.begin()+65);
+    // GetSecretKey(public_key, secret_key);
 
     // HMAC_SHAKE_256((uint8_t*)command_msg.begin()+65, command_msg.length()-65, secret_key, hex_signature);
     
