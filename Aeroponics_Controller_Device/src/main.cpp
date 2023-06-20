@@ -35,13 +35,14 @@ void SendACK(const uint8_t& action, const uint8_t& status);
 
 unsigned long last_send_time = 0, last_receive_time = 0, last_control = 0;
 
-unsigned long pump_on_time = 15UL*1000*60;
-unsigned long pump_off_time = 45UL*1000*60;
+unsigned long pump_on_time = 5UL*1000*60;
+unsigned long pump_off_time = 120UL*1000*60;
 uint8_t pump_status = 0, light_status = 0;
 
+
 void setup() {
+    
     Serial.begin(9600);
-    Serial.println(F("DHT and TDS test!"));
 
     pinMode(TdsSensorPin,INPUT);
     dht.begin();
@@ -53,10 +54,18 @@ void setup() {
     last_control = millis();
     digitalWrite(RELAY_PIN, HIGH);
     pump_status = 1;
+
+    SendSensorData();
 }
 
 void loop() {
    // Wait a few seconds between measurements.
+
+   if (millis() < last_send_time || millis() < last_control || millis() < last_receive_time) {
+        last_control = 0;
+        last_send_time = 0;
+        last_receive_time = 0;
+   }
 
     if (millis() - last_send_time > TIMER_SEND_DATA_PERIOD) {
         SendSensorData();
@@ -72,12 +81,18 @@ void loop() {
         pump_status = 0;
         digitalWrite(RELAY_PIN, LOW);
         last_control = millis();
+
+        SendSensorData();
+        last_send_time = millis();
     }
 
     if (pump_status == 0 && millis() - last_control > pump_off_time) {
         pump_status = 1;
         digitalWrite(RELAY_PIN, HIGH);
         last_control = millis();
+
+        SendSensorData();
+        last_send_time = millis();
     }
 
     delay(10);
@@ -189,9 +204,13 @@ void HMAC_SHAKE_256(uint8_t* message, size_t length_message, uint8_t* key, char*
 void SendSensorData() {
 
     bool ok = ReadTemperatureAndHumidity();
-    if (ok) {
-      ReadTDSAndECLevel();
-    } else return;
+    if (!ok) {
+      Temperature = 0.0f;
+      Humidity = 0.0f;
+      HeatIndex = 0.0f;
+    }
+
+    ReadTDSAndECLevel();
 
     data["ID"] = deviceID;
     data["TP"] = Round2Decimal(Temperature); 
@@ -224,7 +243,7 @@ void SendSensorData() {
     // Serial.print(" bytes \n");
 
     data.clear();
-    //Serial.println("Send Sensor Data OK");
+    Serial.println("Send Sensor Data OK");
 
 }
 
