@@ -103,7 +103,7 @@ func NewMQTTMessageJson(payload []byte) []byte {
 	mqtt_js := MQTTMessageJson{
 		Temperature: lrjs.TP, Humidity: lrjs.HU,
 		Heat_Index: lrjs.HI, TDS_Value: lrjs.TD,
-		EC_Value: lrjs.EC,
+		EC_Value: lrjs.TD / 707.0,
 	}
 
 	result, err := json.Marshal(mqtt_js)
