@@ -1,0 +1,122 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 4,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "c6671a16-e8b5-46a5-9e28-653604d0933b"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      },
+      "id": 2,
+      "options": {
+        "code": {
+          "language": "plaintext",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        },
+        "content": "<style>\n\n\n</style>\n\n<div class=\"numberstyle\">\n  <div>\n    <label for=\"turnOnInput\">Bật hệ thống phun dinh dưỡng trong (phút):</label> <br>\n    <button id=\"turnOnDecrement\">-</button>\n    <input id=\"turnOnInput\" type=\"number\" min=\"1\" max=\"30\" step=\"1\" value=\"1\"> \n    <button id=\"turnOnIncrement\">+</button>\n    \n  </div>\n  <div>\n    <label for=\"turnOffInput\">Bật hệ thống phun dinh dưỡng trong (phút):</label> <br>\n    <button id=\"turnOffDecrement\">-</button>\n    <input id=\"turnOffInput\" type=\"number\" min=\"20\" max=\"300\" step=\"1\" value=\"60\">\n    <button id=\"turnOffIncrement\">+</button>\n  </div>\n</div>\n\n\n<script>\n  const turnOnInput = document.getElementById(\"turnOnInput\");\n  const turnOnIncrement = document.getElementById(\"turnOnIncrement\");\n  const turnOnDecrement = document.getElementById(\"turnOnDecrement\");\n\n  const turnOffInput = document.getElementById(\"turnOffInput\");\n  const turnOffIncrement = document.getElementById(\"turnOffIncrement\");\n  const turnOffDecrement = document.getElementById(\"turnOffDecrement\");\n\n\n  turnOnIncrement.addEventListener(\"click\", () => {\n    turnOnInput.stepUp(1);\n  });\n\n  turnOnDecrement.addEventListener(\"click\", () => {\n    turnOnInput.stepDown(1);\n  });\n\n  turnOffIncrement.addEventListener(\"click\", () => {\n    turnOffInput.stepUp(1);\n  });\n\n  turnOffDecrement.addEventListener(\"click\", () => {\n    turnOffInput.stepDown(1);\n  });\n\n  turnOnInput.addEventListener(\"change\", () => {\n    const value = parseInt(turnOnInput.value);\n    if (value < parseInt(turnOnInput.min))\n      turnOnInput.value = turnOnInput.min;\n    else if (value > parseInt(turnOnInput.max))\n      turnOnInput.value = turnOnInput.max;\n  });\n\n  turnOffInput.addEventListener(\"change\", () => {\n    const value = parseInt(turnOffInput.value);\n    if (value < parseInt(turnOffInput.min))\n      turnOffInput.value = turnOffInput.min;\n    else if (value > parseInt(turnOffInput.max))\n      turnOffInput.value = turnOffInput.max;\n  });\n\n  turnOnInput.addEventListener(\"input\", () => {\n    const value = parseInt(turnOnInput.value);\n    if (value < parseInt(turnOnInput.min))\n      turnOnInput.value = turnOnInput.min;\n    else if (value > parseInt(turnOnInput.max))\n      turnOnInput.value = turnOnInput.max;\n  });\n\n  turnOffInput.addEventListener(\"input\", () => {\n    const value = parseInt(turnOffInput.value);\n    if (value < parseInt(turnOffInput.min))\n      turnOffInput.value = turnOffInput.min;\n    else if (value > parseInt(turnOffInput.max))\n      turnOffInput.value = turnOffInput.max;\n  });\n\n</script>\n\n",
+        "mode": "html"
+      },
+      "pluginVersion": "9.5.2",
+      "title": "Panel Title",
+      "transparent": true,
+      "type": "text"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "c6671a16-e8b5-46a5-9e28-653604d0933b"
+      },
+      "description": "UID: 2598354207890938361",
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 0,
+        "y": 8
+      },
+      "id": 1,
+      "options": {
+        "code": {
+          "language": "plaintext",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        },
+        "content": " <style>\n      /* Styling for the toggle switch */\n      .toggle-switch {\n        position: relative;\n        display: inline-block;\n        width: 120px;\n        height: 68px;\n      }\n\n      .toggle-switch input {\n        opacity: 0;\n        width: 0;\n        height: 0;\n      }\n\n      .toggle-switch .slider {\n        position: absolute;\n        cursor: pointer;\n        top: 0;\n        left: 0;\n        right: 0;\n        bottom: 0;\n        background: linear-gradient(109.6deg, rgba(0, 0, 0, 1) 11.2%, rgba(255, 255, 255, 1) 100.2%);\n        transition: 0.4s;\n        border-radius: 34px;\n      }\n\n      .toggle-switch .slider:before {\n        position: absolute;\n        content: \"\";\n        height: 52px;\n        width: 52px;\n        left: 8px;\n        bottom: 8px;\n        background-color: white;\n        transition: 0.4s;\n        border-radius: 50%;\n      }\n\n      input:checked + .slider {\n        background: linear-gradient(109.6deg, rgba(255, 174, 0, 1) 11.2%, rgba(255, 0, 0, 1) 100.2%);\n      }\n\n      input:checked + .slider:before {\n        transform: translateX(52px);\n      }\n    </style>\n\n    <label class=\"toggle-switch\">\n      <input type=\"checkbox\" id=\"id2598354207890938361\" onchange=\"publishMessage()\">\n      <span class=\"slider\"></span>\n    </label>\n\n\n    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js\" type=\"text/javascript\" defer></script>\n\n    <script type = \"text/javascript\" language = \"javascript\" defer>\n\n      const characters ='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';\n      const reconnectTimeout = 5000;\n\t\t  const host=\"127.0.0.1\";\n      const port=9001;\n      const publish_topic = \"pump/control\";\n      const subscribe_topic = \"lora/ack\";\n      const topic_question = \"pump/status\";\n      const id = \"id2598354207890938361\";\n\n      var pump_state = document.getElementById(id);\n      const stored_pump = localStorage.getItem(id);\n      if (stored_pump) {\n          pump_state.checked = stored_pump === 'true';\n      }\n\n      var mqtt_pub, mqtt_listener;\n\n      function ListenEven() {\n\n          mqtt_listener = new Paho.MQTT.Client(host, port, generateString(32));\n\n          mqtt_listener.onConnectionLost = onConnectionLost;\n          mqtt_listener.onMessageArrived = onMessageArrived;\n          mqtt_listener.reconnect = true;\n          mqtt_listener.reconnectTimeout = reconnectTimeout;\n\n          mqtt_listener.connect({onSuccess:onConnect});\n      }\n\n      function onConnect() {\n          console.log(\"onConnect\");\n          mqtt_listener.subscribe(subscribe_topic);\n          //var message_question = new Paho.MQTT.Message(\"{p}\");\n          //message_question.destinationName = topic_question;\n         // mqtt_listener.send(message_question);\n      }\n\n      function onMessageArrived(message) {\n          const ack = message.payloadString;\n          var state = document.getElementById(id);\n          console.log(\"onMessageArrived:\"+ack);\n\n          const obj = JSON.parse(ack);\n\n          if (obj.id == \"2598354207890938361\" && obj.action == \"CONTROL-ACK\") {\n              if (obj.status == \"PUMP_OFF\") {\n                  state.checked = false;\n              } else if (obj.status == \"PUMP_ON\") {\n                  state.checked = true;\n              }\n          }\n\n          localStorage.setItem(id, document.getElementById(id).checked);\n\n          /*if (led_state == \"ON\") {\n            state.checked = true;\n          }\n          else if (led_state == \"OFF\") {\n            state.checked = false;\n          }*/\n      }\n\n\n      function onPublish() {\n\t\t    console.log(\"Connected \");\n        const message = document.getElementById(id).checked ? '2598354207890938361{\"pump\":1}' : '2598354207890938361{\"pump\":0}';\n\n\t\t    const mqtt_message = new Paho.MQTT.Message(message);\n\t\t    mqtt_message.destinationName = publish_topic;\n\t\t    mqtt_pub.send(mqtt_message);\n\n        console.log(`Published message: ${message} topic: ${publish_topic} `);\n        mqtt_pub.disconnect();\n\n        localStorage.setItem(id, document.getElementById(id).checked);\n\t    }\n\n      function publishMessage() {\n\t\t    console.log(\"connecting to \"+ host +\" \"+ port);\n\t\t    mqtt_pub = new Paho.MQTT.Client(host,port,generateString(32));\n\t\t    var options = {\n\t\t\t    timeout: 10,\n\t\t\t    onSuccess: onPublish\n\t\t    };\n        mqtt_pub.onConnectionLost = onConnectionLost;\n\t\t    mqtt_pub.connect(options);\n\t\t  }\n\n      function onConnectionLost(responseObject) {\n        if (responseObject.errorCode !== 0) {\n          console.log(\"onConnectionLost:\"+responseObject.errorMessage);\n        }\n      }\n\n      function generateString(length) {\n        let result = 'grafana-';\n        const charactersLength = characters.length;\n        for ( let i = 0; i < length; i++ ) {\n            result += characters.charAt(Math.floor(Math.random() * charactersLength));\n        }\n        return result;\n      }\n\n      if (typeof Paho === 'undefined') {\n        var script = document.createElement('script');\n        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js';\n        script.onload = function() {\n          ListenEven();\n        };\n        document.head.appendChild(script);\n      } else {\n        ListenEven();\n      }\n\n    </script>\n\n\n ",
+        "mode": "html"
+      },
+      "pluginVersion": "9.5.2",
+      "title": "Bơm dinh dưỡng",
+      "transparent": true,
+      "type": "text"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "c6671a16-e8b5-46a5-9e28-653604d0933b"
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 5,
+        "x": 6,
+        "y": 8
+      },
+      "id": 3,
+      "options": {
+        "code": {
+          "language": "plaintext",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        },
+        "content": " <style>\n      /* Styling for the toggle switch */\n      .toggle-switch {\n        position: relative;\n        display: inline-block;\n        width: 120px;\n        height: 68px;\n      }\n\n      .toggle-switch input {\n        opacity: 0;\n        width: 0;\n        height: 0;\n      }\n\n      .toggle-switch .slider {\n        position: absolute;\n        cursor: pointer;\n        top: 0;\n        left: 0;\n        right: 0;\n        bottom: 0;\n        background: linear-gradient(109.6deg, rgba(0, 0, 0, 1) 11.2%, rgba(255, 255, 255, 1) 100.2%);\n        transition: 0.4s;\n        border-radius: 34px;\n      }\n\n      .toggle-switch .slider:before {\n        position: absolute;\n        content: \"\";\n        height: 52px;\n        width: 52px;\n        left: 8px;\n        bottom: 8px;\n        background-color: white;\n        transition: 0.4s;\n        border-radius: 50%;\n      }\n\n      input:checked + .slider {\n        background: linear-gradient(109.6deg, rgba(255, 174, 0, 1) 11.2%, rgba(255, 0, 0, 1) 100.2%);\n      }\n\n      input:checked + .slider:before {\n        transform: translateX(52px);\n      }\n    </style>\n\n    <label class=\"toggle-switch\">\n      <input type=\"checkbox\" id=\"lid2598354207890938361\" onchange=\"publishMessagel()\">\n      <span class=\"slider\"></span>\n    </label>\n\n\n     <!-- <script src=\"https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js\" type=\"text/javascript\" defer></script>  -->\n\n    <script type = \"text/javascript\" language = \"javascript\" defer>\n\n      //const characters ='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';\n      //const reconnectTimeout = 5000;\n\t\t  //const host=\"127.0.0.1\";\n      //const port=9001;\n      const publish_topicl = \"lights/control\";\n      const subscribe_topicl = \"lora/ack\";\n      const topic_questionl = \"lights/status\";\n      const idl = \"lid2598354207890938361\";\n\n      var light_state = document.getElementById(idl);\n      const stored_light = localStorage.getItem(idl);\n      if (stored_light) {\n          light_state.checked = stored_light === 'true';\n      }\n\n      var mqtt_publ, mqtt_listenerl;\n\n      function ListenEvenl() {\n\n          mqtt_listenerl = new Paho.MQTT.Client(host, port, generateStringl(32));\n\n          mqtt_listenerl.onConnectionLost = onConnectionLostl;\n          mqtt_listenerl.onMessageArrived = onMessageArrivedl;\n          mqtt_listenerl.reconnect = true;\n          mqtt_listenerl.reconnectTimeout = reconnectTimeout;\n\n          mqtt_listenerl.connect({onSuccess:onConnectl});\n      }\n\n      function onConnectl() {\n          console.log(\"onConnect\");\n          mqtt_listenerl.subscribe(subscribe_topicl);\n          //var message_question = new Paho.MQTT.Message(\"{p}\");\n          //message_question.destinationName = topic_question;\n         // mqtt_listener.send(message_question);\n      }\n\n      function onMessageArrivedl(message) {\n          const ack = message.payloadString;\n          var state = document.getElementById(idl);\n          console.log(\"onMessageArrived:\"+ack);\n\n          const obj = JSON.parse(ack);\n\n          if (obj.id == \"2598354207890938361\" && obj.action == \"CONTROL-ACK\") {\n              if (obj.status == \"LIGHT_ON\") {\n                  state.checked = false;\n              } else if (obj.status == \"LIGHT_OFF\") {\n                  state.checked = true;\n              }\n          }\n\n          localStorage.setItem(idl, document.getElementById(idl).checked);\n\n          /*if (led_state == \"ON\") {\n            state.checked = true;\n          }\n          else if (led_state == \"OFF\") {\n            state.checked = false;\n          }*/\n      }\n\n\n      function onPublishl() {\n\t\t    console.log(\"Connected \");\n        const message = document.getElementById(idl).checked ? '2598354207890938361{\"light\":0}' : '2598354207890938361{\"light\":1}';\n\n\t\t    const mqtt_message = new Paho.MQTT.Message(message);\n\t\t    mqtt_message.destinationName = publish_topicl;\n\t\t    mqtt_publ.send(mqtt_message);\n\n        console.log(`Published message: ${message} topic: ${publish_topicl} `);\n        mqtt_publ.disconnect();\n\n        localStorage.setItem(idl, document.getElementById(idl).checked);\n\t    }\n\n      function publishMessagel() {\n\t\t    console.log(\"connecting to \"+ host +\" \"+ port);\n\t\t    mqtt_publ = new Paho.MQTT.Client(host,port,generateStringl(32));\n\t\t    var options = {\n\t\t\t    timeout: 10,\n\t\t\t    onSuccess: onPublishl\n\t\t    };\n        mqtt_publ.onConnectionLost = onConnectionLostl;\n\t\t    mqtt_publ.connect(options);\n\t\t  }\n\n      function onConnectionLostl(responseObject) {\n        if (responseObject.errorCode !== 0) {\n          console.log(\"onConnectionLost:\"+responseObject.errorMessage);\n        }\n      }\n\n      function generateStringl(length) {\n        let result = 'grafana-';\n        const charactersLength = characters.length;\n        for ( let i = 0; i < length; i++ ) {\n            result += characters.charAt(Math.floor(Math.random() * charactersLength));\n        }\n        return result;\n      }\n\n      if (typeof Paho === 'undefined') {\n        var script = document.createElement('script');\n        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js';\n        script.onload = function() {\n          ListenEvenl();\n        };\n        document.head.appendChild(script);\n      } else {\n        ListenEvenl();\n      }\n\n    </script>\n\n\n ",
+        "mode": "html"
+      },
+      "pluginVersion": "9.5.2",
+      "title": "Ánh Sáng",
+      "transparent": true,
+      "type": "text"
+    }
+  ],
+  "refresh": false,
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "2023-06-18T19:28:40.642Z",
+    "to": "2023-06-19T01:28:40.642Z"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "Control dashboard",
+  "uid": "fd32c3d3-bf1c-4d9d-85e7-add053f958dc",
+  "version": 32,
+  "weekStart": ""
+}

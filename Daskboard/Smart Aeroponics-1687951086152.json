@@ -576,7 +576,7 @@
             }
           },
           "mappings": [],
-          "max": 1200,
+          "max": 2000,
           "min": 0,
           "thresholds": {
             "mode": "absolute",
@@ -587,11 +587,11 @@
               },
               {
                 "color": "dark-green",
-                "value": 600
+                "value": 1000
               },
               {
                 "color": "red",
-                "value": 900
+                "value": 1800
               }
             ]
           },
@@ -988,13 +988,13 @@
     "list": []
   },
   "time": {
-    "from": "now-1h",
+    "from": "now-30m",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "",
   "title": "Smart Aeroponics",
   "uid": "ab345636-1145-4dd3-85f4-98f467c23b4d",
-  "version": 15,
+  "version": 16,
   "weekStart": ""
 }

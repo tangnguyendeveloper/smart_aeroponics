@@ -17,7 +17,13 @@ func (lg *LoRaGateway) mqttMessageHandle() {
 			continue
 		}
 
-		if len(msg.Payload()) < 20 {
+		n := len(msg.Payload())
+
+		if msg.Topic() == "pump/status" || msg.Topic() == "lights/status" {
+			n = 22
+		}
+
+		if n < 20 {
 			continue
 		}
 
